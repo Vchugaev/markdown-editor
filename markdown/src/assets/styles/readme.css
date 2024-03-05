@@ -1,0 +1,113 @@
+@font-face {
+    font-family: 'Cabin';
+    src: url('../fonts/Cabin.ttf');
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/inter.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat.ttf');
+}
+
+
+.readme h1,
+.readme h2,
+.readme h3,
+.readme h4,
+.readme h5,
+.readme h6 {
+    font-family: 'Cabin';
+    color: white;
+    letter-spacing: 3px;
+}
+
+.readme {
+    background-color: #15161A;
+    width: 50%;
+    overflow-y: scroll;
+    height: 90%;
+    font-family: 'Montserrat';
+}
+
+.readme h1 {
+    font-size: 48px;
+}
+
+.readme h2 {
+    font-size: 32px;
+    font-weight: 100;
+}
+
+.readme h3 {
+    font-size: 24px;
+}
+
+.readme h4 {
+    font-size: 18px;
+}
+
+.readme h5 {
+    font-size: 16px;
+}
+
+.readme h6 {
+    font-size: 14px;
+    color: #E46744;
+}
+
+.readme ol {
+    list-style-type: decimal;
+}
+
+.readme table * {
+    border: 2px solid black;
+}
+
+.readme {
+    margin-left: 20px;
+    color: #acacac;
+}
+
+
+
+.readme pre {
+    background: #2C2D31;
+    color: white;
+    display: block;
+    width: max-content;
+    border-radius: 5px;
+    margin: 10px 0;
+    padding: 10px;
+}
+
+.readme ul {
+    list-style-type: disc;
+    padding-left: 45px;
+}
+
+.readme ol {
+    list-style-type: decimal;
+    padding-left: 45px;
+}
+
+ul li::marker {
+    color: #E46744;
+}
+
+.readme blockquote {
+    background: #2C2D31;
+    color: white;
+    display: block;
+    border-left: #E46744 solid 4px;
+    border-radius: 5px;
+    margin: 10px 0;
+    padding: 10px;
+}
+
+.readme a {
+    text-decoration: underline
+}
