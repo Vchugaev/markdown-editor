@@ -22,13 +22,15 @@ export default function Dashboard() {
     const [folderName, setFolderName] = useState('')
     const [extension, setExtension] = useState('')
 
-    const token = Cookies.get('token')
 
 
     useEffect(() => {
         getFiles()
         getFileValue
     }, [isLoading]);
+
+    console.log(userFiles);
+
 
 
     useEffect(() => {
@@ -45,58 +47,48 @@ export default function Dashboard() {
     }, [nameFile]);
 
     function getFiles() {
-        if (token) {
-            axios.get('http://localhost:5000/api/readfolder', {
-                headers: {
-                    Authorization: token
-                },
-                withCredentials: true,
+
+        console.log('sosal');
+
+        axios.get(`${import.meta.env.VITE_SERVER_API}/api/readfolder`, {
+
+            withCredentials: true,
+        })
+            .then(response => {
+                setUserFiles(response.data.userFolderFiles);
+                setIsLoading(false);
             })
-                .then(response => {
-                    setUserFiles(response.data.userFolderFiles);
-                    setIsLoading(false);
-                })
-                .catch(error => {
-                    console.error("Error fetching data:", error);
-                    setError(error.response);
-                    setIsLoading(false);
-                });
-        } else {
-            console.log("Token not found");
-            setIsLoading(false);
-        }
+            .catch(error => {
+                console.error("Error fetching data:", error);
+                setError(error.response);
+                setIsLoading(false);
+            });
+
     }
 
     function getFileValue(item) {
         setIsLoading(true);
-        if (token) {
-            setActivePage('http://localhost:5000/userfolders/' + item)
-            axios.get('http://localhost:5000/userfolders/', {
-                headers: {
-                    Authorization: token
-                },
-                withCredentials: true,
-            })
-            axios.get('http://localhost:5000/userfolders/' + item, {
-                headers: {
-                    Authorization: token
-                },
-                withCredentials: true,
-            })
-                .then(response => {
-                    setValue(String(response.data));
-                    setNameFile(item)
 
-                    console.log(response.data);
-                })
-                .catch(error => {
-                    console.error("Error fetching data:", error);
-                    setIsLoading(false);
-                });
-        } else {
-            console.log("Token not found");
-            setIsLoading(false);
-        }
+        setActivePage(`${import.meta.env.VITE_SERVER_API}/userfolders/` + item)
+        axios.get(`${import.meta.env.VITE_SERVER_API}/userfolders/`, {
+
+            withCredentials: true,
+        })
+        axios.get(`${import.meta.env.VITE_SERVER_API}/userfolders/` + item, {
+
+            withCredentials: true,
+        })
+            .then(response => {
+                setValue(String(response.data));
+                setNameFile(item)
+
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+                setIsLoading(false);
+            });
+
     }
 
 
@@ -113,21 +105,17 @@ export default function Dashboard() {
 
     const postFile = async (nameFile, fileContent) => {
         console.log(nameFile);
-        console.log(token);
         try {
             setIsLoading(true)
             // Получаем содержимое файла из состояния value
             // const fileContent = value;
 
             // Отправляем POST запрос
-            const response = await axios.post('http://localhost:5000/api/uploadfile', {
+            const response = await axios.post(`${import.meta.env.VITE_SERVER_API}/api/uploadfile`, {
                 // Добавляем имя файла и его содержимое
                 filename: nameFile,
                 filecontent: fileContent
             }, {
-                headers: {
-                    Authorization: token
-                },
                 withCredentials: true,
             });
             console.log('File uploaded successfully:', response.data);
@@ -182,7 +170,7 @@ export default function Dashboard() {
             </div>
             <div className="readme list-disc  *:py-2 h-m">
 
-                {extension == 'markdown'? parse(marked.parse(value)) : <iframe className="bg-white" height={'100%'} width={'100%'} key={updateCounter} src={activePage}></iframe>}
+                {extension == 'markdown' ? parse(marked.parse(value)) : <iframe className="bg-white" height={'100%'} width={'100%'} key={updateCounter} src={activePage}></iframe>}
             </div>
         </div>
     </div>

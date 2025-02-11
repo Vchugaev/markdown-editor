@@ -15,17 +15,16 @@ import {
 
 export default function Header(props) {
     const [folderName, setFolderName] = useState('')
-    const token = Cookies.get('token')
+
 
     const [user, setUser] = useState([])
+    const [isLoading, setIsLoading] = useState()
 
 
     useEffect(() => {
-        if (token) {
-            axios.get('http://localhost:5000/api/user', {
-                headers: {
-                    Authorization: token
-                },
+
+            axios.get(`${import.meta.env.VITE_SERVER_API}/api/user`, {
+
                 withCredentials: true,
             })
                 .then(response => {
@@ -37,33 +36,36 @@ export default function Header(props) {
                     setError(error.response);
                     setIsLoading(false);
                 });
-        } else {
-            console.log("Token not found");
-            setIsLoading(false);
-        }
+
     }, [])
 
 
 
-    let logout = () => {
-        Cookies.remove('token')
-        window.location.replace("/")
+    function getFiles() {
+
+            axios.get(`${import.meta.env.VITE_SERVER_API}/api/readfolder`, {
+                withCredentials: true,
+            })
+                .then(response => {
+                    setUserFiles(response.data.userFolderFiles);
+                    setIsLoading(false);
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    setError(error.response);
+                    setIsLoading(false);
+                });
+
     }
-
-
-
 
 
 
     const createFolder = async (item) => {
         props.setIsLoading(true)
         try {
-            const response = await axios.post('http://localhost:5000/api/createfolder/', {
+            const response = await axios.post(`${import.meta.env.VITE_SERVER_API}/api/createfolder/`, {
                 folder: item
             }, {
-                headers: {
-                    Authorization: token
-                },
                 withCredentials: true,
 
             });

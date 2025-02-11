@@ -24,18 +24,14 @@ export default function Aside({ getFileValue, userFiles, getFiles, postFile }) {
 
     const [isLoading, setIsLoading] = useState(false);
     const [folderName, setFolderName] = useState('');
-    const token = Cookies.get('token')
 
 
     const createFolder = async (item) => {
         try {
             setIsLoading(true);
-            const response = await axios.post('http://localhost:5000/api/createfolder/', {
+            const response = await axios.post(`${import.meta.env.VITE_SERVER_API}/api/createfolder/`, {
                 folder: item + '/' + folderName
             }, {
-                headers: {
-                    Authorization: token
-                },
                 withCredentials: true,
             });
             console.log('File uploaded successfully:', response.data);
@@ -49,12 +45,9 @@ export default function Aside({ getFileValue, userFiles, getFiles, postFile }) {
 
     const deletePath = async (item) => {
         try {
-            const response = await axios.post('http://localhost:5000/api/delete/', {
+            const response = await axios.post(`${import.meta.env.VITE_SERVER_API}/api/delete/`, {
                 path: item + '/' + folderName
             }, {
-                headers: {
-                    Authorization: token
-                },
                 withCredentials: true,
             });
             console.log(response.data);

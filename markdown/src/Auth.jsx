@@ -7,24 +7,32 @@ function Auth() {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
 
-    const token = Cookies.get('token')
+    useEffect(() => {
+
+        axios.get(`${import.meta.env.VITE_SERVER_API}/api/user`, {
+            withCredentials: true,
+        })
+        .then(response => {
+            setUser(response.data.user);
+            console.log(response.data.user);
+            window.location.replace("/dashboard"); // Редирект только если токен валиден
+        })
+        .catch(error => {
+            console.error("Ошибка авторизации:", error);
+            setError("Не удалось авторизоваться");
+        })
+        .finally(() => setIsLoading(false));
     
-    useEffect(() => {
-
-        if (token) {
-            window.location.replace("/dashboard")
-        }
-    }, [])
+    }, []);
+    
 
 
 
 
     useEffect(() => {
-        if (token) {
-            axios.get('http://localhost:5000/api/user', {
-                headers: {
-                    Authorization: token
-                },
+
+            axios.get(`${import.meta.env.VITE_SERVER_API}/api/user`, {
+
                 withCredentials: true,
             })
                 .then(response => {
@@ -36,16 +44,14 @@ function Auth() {
                     setError(error.response.data.message);
                     setIsLoading(false);
                 });
-        } else {
-            setIsLoading(false);
-        }
+
     }, []);
 
     return (
         <>
             <main className='bg-bg-black h-screen flex flex-col'>
                 <h1 className="text-text-grey mt-40 text-5xl text-center ">/* АВТОРИЗАЦИЯ */</h1>
-                <form className='mx-auto bg-header-black p-5 rounded-xl mt-20 animate-orangeshadow' method='POST' action="http://localhost:5000/api/login">
+                <form className='mx-auto bg-header-black p-5 rounded-xl mt-20 animate-orangeshadow' method='POST' action={`${import.meta.env.VITE_SERVER_API}/api/login`}>
                     <label className='text-white text-lg ' htmlFor="">Логин или Email:</label><br />
                     <input name="email" type="text" className='mb-3 p-1 rounded-md' /><br />
                     <label className='text-white text-lg ' htmlFor="">Пароль:</label><br />

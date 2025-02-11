@@ -7,13 +7,6 @@ import Cookies from "js-cookie";
 
 export default function Home() {
 
-    // useEffect(() => {
-    // const token = Cookies.get('token')
-
-    //     if (token) {
-    //         window.location.replace("/dashboard")
-    //     }
-    // }, [])
 
     const el = useRef(null);
     useEffect(() => {
