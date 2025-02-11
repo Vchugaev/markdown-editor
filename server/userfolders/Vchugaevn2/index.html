@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карточка пользователя</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
+        }
+        .card img {
+            width: 100px;
+            border-radius: 50%;
+        }
+        .card h2 {
+            margin: 10px 0;
+        }
+        .card p {
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <img src="https://via.placeholder.com/100" alt="Аватар">
+        <h2>Иван Иванов</h2>
+        <p>Fullstack-разработчик</p>
+        <button onclick="alert('Привет, Иван!')">Поздороваться</button>
+    </div>
+</body>
+</html>

@@ -11,19 +11,24 @@ const route = express.Router();
 const userModel = require('../models/userModel');
 
 route.post("/register", async (req, res) => {
-
     try {
         const { name, email, password } = req.body;
         console.log(name, email, password);
 
         if (!name || !email || !password) {
-            return res.json({ message: 'Please enter all the details' });
+            return res.status(400).json({ message: 'Заполните все поля' });
         }
 
-        const userExist = await userModel.findOne({ email });
-        const loginExist = await userModel.findOne({ name });
-        if (userExist || loginExist) {
-            return res.json({ message: 'Пользователь с таким Email или Логином уже существует!' });
+        if (password.length < 6) {
+            return res.status(400).json({ message: 'Пароль должен содержать минимум 6 символов' });
+        }
+
+        const userExist = await userModel.findOne({
+            $or: [{ email }, { name }]
+        });
+
+        if (userExist) {
+            return res.status(400).json({ message: 'Пользователь с таким Email или Логином уже существует!' });
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -37,17 +42,19 @@ route.post("/register", async (req, res) => {
 
         await newUser.save();
 
-        const token = await jwt.sign({ id: newUser._id }, process.env.SECRET_KEY, {
-            expiresIn: process.env.JWT_EXPIRE,
-        });
+        const token = jwt.sign(
+            { id: newUser._id },
+            process.env.SECRET_KEY,
+            { expiresIn: process.env.JWT_EXPIRE || '7d' } // Значение по умолчанию
+        );
 
-        return res.cookie("token", token).res.status(302).redirect('http://localhost:5173/dashboard');
+        res.cookie("token", token, { httpOnly: true });
+        return res.status(302).redirect('http://localhost:5173/dashboard');
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
+});
 
-
-})
 
 route.post('/login', async (req, res) => {
     try {
@@ -81,7 +88,7 @@ route.post('/login', async (req, res) => {
 
 route.get('/user', isAuthenticated, async (req, res) => {
     try {
-        const user = req.user; 
+        const user = req.user;
         if (!user) {
             return res.json({ message: 'User not found' });
         }
@@ -93,7 +100,7 @@ route.get('/user', isAuthenticated, async (req, res) => {
 
 route.get('/userfolders', isAuthenticated, async (req, res) => {
     try {
-        const user = req.user; 
+        const user = req.user;
         if (!user) {
             return res.json({ message: 'User not found' });
         }
@@ -106,7 +113,7 @@ route.get('/userfolders', isAuthenticated, async (req, res) => {
             fs.copySync(defaultTemplate, userFolderPath);
         }
 
-       
+
 
         return res.json({ success: true, message: 'User folder created successfully' });
     } catch (error) {
@@ -117,12 +124,14 @@ route.get('/userfolders', isAuthenticated, async (req, res) => {
 route.post('/uploadfile', isAuthenticated, async (req, res) => {
     try {
 
-        const user = req.user.name; 
+        const user = req.user.name;
 
         const file = req.body
 
+        console.log(file);
+        
         // console.log(file);
-        console.log(user);
+        // console.log(user);
         const userFolderPath = path.join(__dirname, '../userfolders', user);
         if (!fs.existsSync(userFolderPath)) {
             fs.mkdirSync(userFolderPath);
@@ -145,6 +154,8 @@ route.get('/readfolder', isAuthenticated, async (req, res) => {
         const user = req.user.name; // Получение информации об авторизованном пользователе из объекта req.user
         const userFolderPath = path.join(__dirname, '../userfolders', user);
 
+        console.log('folder user', user);
+        
         // let userFolderFiles = fs.readdirSync(userFolderPath);
 
         // console.log(userFolderFiles); // Здесь будут доступны файлы из каталога
@@ -189,7 +200,7 @@ route.post('/createfolder', isAuthenticated, async (req, res) => {
     try {
 
         console.log(req.body.folder);
-        const user = req.user.name; 
+        const user = req.user.name;
         const folderName = req.body.folder;
 
         const userFolderPath = path.join(__dirname, '../userfolders', user);
@@ -197,7 +208,7 @@ route.post('/createfolder', isAuthenticated, async (req, res) => {
         const createFolderPath = path.join(userFolderPath, folderName);
 
         console.log(createFolderPath);
-  
+
         fs.mkdirSync(createFolderPath);
 
 
@@ -227,7 +238,7 @@ route.post('/delete', isAuthenticated, async (req, res) => {
     }
 });
 
- 
+
 
 
 module.exports = route;
